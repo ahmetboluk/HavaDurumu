@@ -50,9 +50,7 @@ public class Forecast {
         return list;
     }
 
-    public void setList(java.util.List<com.ahmetboluk.havadurumu.model.List> list) {
-        this.list = list;
-    }
+    public void setList(java.util.List<com.ahmetboluk.havadurumu.model.List> list) { this.list = list; }
 
     public City getCity() {
         return city;
