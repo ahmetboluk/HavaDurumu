@@ -17,7 +17,7 @@ public class Model {
     private Integer cnt;
     @SerializedName("list")
     @Expose
-    private java.util.List<com.example.List> list = null;
+    private java.util.List<com.ahmetboluk.havadurumu.model.List> list = null;
     @SerializedName("city")
     @Expose
     private City city;
@@ -46,11 +46,11 @@ public class Model {
         this.cnt = cnt;
     }
 
-    public java.util.List<com.example.List> getList() {
+    public java.util.List<com.ahmetboluk.havadurumu.model.List> getList() {
         return list;
     }
 
-    public void setList(java.util.List<com.example.List> list) {
+    public void setList(java.util.List<com.ahmetboluk.havadurumu.model.List> list) {
         this.list = list;
     }
 
