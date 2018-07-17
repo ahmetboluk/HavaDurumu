@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.ahmetboluk.havadurumu.R;
 import com.ahmetboluk.havadurumu.model.Forecast;
 import com.ahmetboluk.havadurumu.ui.base.BaseActivity;
 
@@ -14,6 +15,7 @@ public class MainActivity extends BaseActivity implements MainViewInterface {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(new String[]{Manifest.permission.INTERNET}, 0);
         }
