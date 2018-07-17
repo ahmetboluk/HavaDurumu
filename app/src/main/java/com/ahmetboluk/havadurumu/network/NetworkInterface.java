@@ -9,5 +9,5 @@ import retrofit2.http.Query;
 
 public interface NetworkInterface {
     @GET("forecast")
-    Call<Forecast> getForecastsByLatLng(@Query("lat") String lat, @Query("lon") String lon, @Query("lang") String lang, @Query("appid") String apikey);
+    Call<Forecast> getForecastsByLatLng(@Query("lat") String lat, @Query("lon") String lon, @Query("lang") String lang,@Query("units") String units, @Query("appid") String apikey);
 }

@@ -19,7 +19,7 @@ public class MainPresenter implements MainPresenterInterface {
 
     @Override
     public void getForecasts() {
-        NetworkClient.getInstance().create(NetworkInterface.class).getForecastsByLatLng("40.9","29.1","tr", Constant.API_KEY).enqueue(new Callback<Forecast>() {
+        NetworkClient.getInstance().create(NetworkInterface.class).getForecastsByLatLng("40.9","29.1","tr","metric", Constant.API_KEY).enqueue(new Callback<Forecast>() {
             @Override
             public void onResponse(Call<Forecast> call, Response<Forecast> response) {
                 Log.d("Response",response.raw()+"");

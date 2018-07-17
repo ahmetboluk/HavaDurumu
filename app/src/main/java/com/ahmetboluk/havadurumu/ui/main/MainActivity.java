@@ -25,6 +25,6 @@ public class MainActivity extends BaseActivity implements MainViewInterface {
 
     @Override
     public void displayDailyForecasts(Forecast forecast) {
-        Log.d("Response",forecast.getCity().getName());
+        Log.d("Response",forecast.getList().get(0).getMain().getTemp().toString());
     }
 }
