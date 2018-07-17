@@ -6,16 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.ahmetboluk.havadurumu.Constant;
 import com.ahmetboluk.havadurumu.model.Forecast;
-
-import com.ahmetboluk.havadurumu.network.NetworkClient;
-import com.ahmetboluk.havadurumu.network.NetworkInterface;
 import com.ahmetboluk.havadurumu.ui.base.BaseActivity;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends BaseActivity implements MainViewInterface {
     MainPresenter mainPresenter;
