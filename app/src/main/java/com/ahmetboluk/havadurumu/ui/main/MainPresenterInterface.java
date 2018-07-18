@@ -1,5 +1,5 @@
 package com.ahmetboluk.havadurumu.ui.main;
 
 public interface MainPresenterInterface {
-    void getForecasts();
+    void getForecasts(double latitude,double longitude);
 }

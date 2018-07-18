@@ -36,7 +36,7 @@ public class ThreeHourForecastAdapter extends RecyclerView.Adapter<ThreeHourFore
     public void onBindViewHolder(@NonNull DailyWeatherViewHolder holder, int position) {
        holder.time.setText(position==0?"NOW":forecast.getList().get(position).getDtTxt().substring(10,16));
        Glide.with(context).load("http://openweathermap.org/img/w/"+forecast.getList().get(position).getWeather().get(0).getIcon()+".png").into(holder.icon);
-       holder.temperature.setText(forecast.getList().get(position).getMain().getTemp().intValue()+"");
+       holder.temperature.setText(forecast.getList().get(position).getMain().getTemp().intValue()+" °C");
     }
 
     @Override
