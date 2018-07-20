@@ -2,17 +2,16 @@ package com.ahmetboluk.havadurumu.ui.main;
 
 import android.Manifest;
 import android.app.Activity;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.ahmetboluk.havadurumu.Constant;
 import com.ahmetboluk.havadurumu.model.Forecast;
 import com.ahmetboluk.havadurumu.model.SingleWeather;
@@ -21,7 +20,10 @@ import com.ahmetboluk.havadurumu.network.NetworkInterface;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
@@ -41,17 +43,17 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
     Task<Location> mLastLocation;
     MainViewInterface mainViewInterface;
     Activity activity;
+    LocationCallback mLocationCallback;
+    FusedLocationProviderClient mFusedLocationClient;
+    LocationRequest mLocationRequest;
+
+
     double[] location;
 
 
     public MainPresenter(Activity activity, MainViewInterface mainViewInterface) {
         this.mainViewInterface = mainViewInterface;
         this.activity = activity;
-
-    }
-
-    @Override
-    public void getForecasts(double latitude, double longitude) {
 
     }
 
@@ -62,10 +64,10 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
                 .addApi(LocationServices.API).build();
 
         mGoogleApiClient.connect();
-
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1);
+        mLocationRequest.setFastestInterval(10000*6);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -171,18 +173,58 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
                 } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
                 return;
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request.
         }
+    }
+
+    public void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    Log.d("UpdatedLocation",location.getLatitude()+" - "+location.getLongitude());
+                    NetworkClient.getInstance().create(NetworkInterface.class).getWeatherByLatLng(location.getLatitude(), location.getLongitude(), "tr", "metric", Constant.API_KEY).enqueue(new Callback<SingleWeather>() {
+                        @Override
+                        public void onResponse(Call<SingleWeather> call, Response<SingleWeather> response) {
+                            mainViewInterface.displaySingleWeather(response.body());
+                        }
+
+                        @Override
+                        public void onFailure(Call<SingleWeather> call, Throwable t) {
+
+                        }
+                    });
+                    NetworkClient.getInstance().create(NetworkInterface.class).getForecastsByLatLng(location.getLatitude(), location.getLongitude(), "tr", "metric", Constant.API_KEY).enqueue(new Callback<Forecast>() {
+                        @Override
+                        public void onResponse(Call<Forecast> call, Response<Forecast> response) {
+                            Log.d("Response", response.raw() + "");
+                            mainViewInterface.displayDailyForecasts(response.body());
+                        }
+
+                        @Override
+                        public void onFailure(Call<Forecast> call, Throwable t) {
+                            Log.d("Error", t.getMessage());
+                        }
+                    });
+                }
+            }
+        };
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                mLocationCallback,
+                null /* Looper */);
+    }
+    public void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
 
