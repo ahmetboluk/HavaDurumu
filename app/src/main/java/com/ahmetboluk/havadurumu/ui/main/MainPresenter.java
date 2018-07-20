@@ -2,21 +2,20 @@ package com.ahmetboluk.havadurumu.ui.main;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.ahmetboluk.havadurumu.Constant;
 import com.ahmetboluk.havadurumu.model.Forecast;
 import com.ahmetboluk.havadurumu.model.SingleWeather;
-import com.ahmetboluk.havadurumu.model.Weather;
 import com.ahmetboluk.havadurumu.network.NetworkClient;
 import com.ahmetboluk.havadurumu.network.NetworkInterface;
 import com.google.android.gms.common.ConnectionResult;
@@ -48,10 +47,11 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
     public MainPresenter(Activity activity, MainViewInterface mainViewInterface) {
         this.mainViewInterface = mainViewInterface;
         this.activity = activity;
+
     }
 
     @Override
-    public void getForecasts(double latitude,double longitude) {
+    public void getForecasts(double latitude, double longitude) {
 
     }
 
@@ -73,16 +73,18 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
 
         Task<LocationSettingsResponse> result =
                 LocationServices.getSettingsClient(activity).checkLocationSettings(builder.build());
-
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},0);
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, Constant.REQUEST_LOCATION);
+
         }
+
+
         mLastLocation = LocationServices.getFusedLocationProviderClient(activity).getLastLocation();
         mLastLocation.addOnCompleteListener(new OnCompleteListener<Location>() {
             @Override
             public void onComplete(@NonNull Task<Location> task) {
-                if (task.isSuccessful()){
-                    NetworkClient.getInstance().create(NetworkInterface.class).getWeatherByLatLng( task.getResult().getLatitude(),task.getResult().getLongitude(), "tr", "metric", Constant.API_KEY).enqueue(new Callback<SingleWeather>() {
+                if (task.isSuccessful()) {
+                    NetworkClient.getInstance().create(NetworkInterface.class).getWeatherByLatLng(task.getResult().getLatitude(), task.getResult().getLongitude(), "tr", "metric", Constant.API_KEY).enqueue(new Callback<SingleWeather>() {
                         @Override
                         public void onResponse(Call<SingleWeather> call, Response<SingleWeather> response) {
                             mainViewInterface.displaySingleWeather(response.body());
@@ -93,7 +95,7 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
 
                         }
                     });
-                    NetworkClient.getInstance().create(NetworkInterface.class).getForecastsByLatLng( task.getResult().getLatitude(),task.getResult().getLongitude(), "tr", "metric", Constant.API_KEY).enqueue(new Callback<Forecast>() {
+                    NetworkClient.getInstance().create(NetworkInterface.class).getForecastsByLatLng(task.getResult().getLatitude(), task.getResult().getLongitude(), "tr", "metric", Constant.API_KEY).enqueue(new Callback<Forecast>() {
                         @Override
                         public void onResponse(Call<Forecast> call, Response<Forecast> response) {
                             Log.d("Response", response.raw() + "");
@@ -109,10 +111,12 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
             }
         });
 
+
     }
+
     @Override
     public void onConnectionFailed(ConnectionResult result) {
-        Log.i("Location", "Connection failed: ConnectionResult.getErrorCode() = "+ result.getErrorCode());
+        Log.i("Location", "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
     }
 
     @Override
@@ -125,6 +129,7 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
     public void onConnectionSuspended(int arg0) {
         mGoogleApiClient.connect();
     }
+
     private boolean checkPlayServices() {
 
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
@@ -132,7 +137,7 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
 
         if (resultCode != ConnectionResult.SUCCESS) {
             if (googleApiAvailability.isUserResolvableError(resultCode)) {
-                googleApiAvailability.getErrorDialog(activity,resultCode,
+                googleApiAvailability.getErrorDialog(activity, resultCode,
                         0).show();
             } else {
                 Toast.makeText(activity,
@@ -143,14 +148,14 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
         }
         return true;
     }
-    public Address getAddress(double latitude, double longitude)
-    {
+
+    public Address getAddress(double latitude, double longitude) {
         Geocoder geocoder;
         List<Address> addresses;
         geocoder = new Geocoder(activity, Locale.getDefault());
 
         try {
-            addresses = geocoder.getFromLocation(latitude,longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
             return addresses.get(0);
         } catch (IOException e) {
             e.printStackTrace();
@@ -160,6 +165,25 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d("buradamısın", "burada");
+        switch (requestCode) {
+            case Constant.REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
 
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
     }
+
+
 }

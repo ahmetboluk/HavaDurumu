@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="1"
-    android:background="#245676"
-    android:gravity="center">
+    android:background="@color/colorPrimaryDark">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_weight="0.8"
         android:gravity="center">
 
         <TextView
@@ -19,24 +16,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/alfa_slab_one"
-            android:text="Ataşehir"
-            android:textSize="14sp"
+            android:textSize="24sp"
             android:textColor="#FFF"/>
 
         <TextView
             android:id="@+id/condition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="bulutlu"
-            android:textSize="10sp"
+            android:textSize="16sp"
             android:textColor="#FFF"/>
 
         <TextView
             android:id="@+id/degree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="20°C"
-            android:textSize="30sp"
+            android:textSize="100dp"
             android:textColor="#FFF"/>
     </LinearLayout>
 
@@ -44,5 +38,7 @@
         android:id="@+id/five_days_forecast"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.2"/>
-</LinearLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        />
+</RelativeLayout>
