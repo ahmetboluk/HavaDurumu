@@ -48,6 +48,7 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
     LocationRequest mLocationRequest;
 
 
+
     double[] location;
 
 

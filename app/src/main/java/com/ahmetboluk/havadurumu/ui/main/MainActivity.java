@@ -27,6 +27,7 @@ public class MainActivity extends BaseActivity implements MainViewInterface{
     LocationCallback mLocationCallback;
 
 
+
     @Override
     protected void onPause() {
         super.onPause();
