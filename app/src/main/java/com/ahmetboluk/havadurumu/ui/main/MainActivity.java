@@ -1,7 +1,6 @@
 package com.ahmetboluk.havadurumu.ui.main;
 
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,8 +14,6 @@ import com.ahmetboluk.havadurumu.R;
 import com.ahmetboluk.havadurumu.model.Forecast;
 import com.ahmetboluk.havadurumu.model.SingleWeather;
 import com.ahmetboluk.havadurumu.ui.base.BaseActivity;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
 
 public class MainActivity extends BaseActivity implements MainViewInterface{
     MainPresenter mainPresenter;
@@ -24,8 +21,8 @@ public class MainActivity extends BaseActivity implements MainViewInterface{
     TextView location;
     TextView condition;
     TextView degree;
-    LocationCallback mLocationCallback;
 
+<<<<<<< HEAD
 
 
     @Override
@@ -40,6 +37,8 @@ public class MainActivity extends BaseActivity implements MainViewInterface{
         super.onResume();
         mainPresenter.startLocationUpdates();
     }
+=======
+>>>>>>> origin/master
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,12 +46,17 @@ public class MainActivity extends BaseActivity implements MainViewInterface{
         mainPresenter = new MainPresenter(MainActivity.this,this);
         mainPresenter.locationProcess();
 
+        if (mainPresenter.location!=null){
+            Log.d("Latitude",mainPresenter.location[0]+"");
+            Log.d("Longitude",mainPresenter.location[1]+"");
+            //mainPresenter.getForecasts(mainPresenter.location[0],mainPresenter.location[1]);
+
+        }
         rvForecast = findViewById(R.id.five_days_forecast);
         rvForecast.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
         location=findViewById(R.id.location);
         condition=findViewById(R.id.condition);
         degree=findViewById(R.id.degree);
-
     }
 
     @Override
@@ -66,23 +70,26 @@ public class MainActivity extends BaseActivity implements MainViewInterface{
     public void displaySingleWeather(SingleWeather singleWeather) {
         location.setText(singleWeather.getName());
         condition.setText(singleWeather.getWeather().get(0).getDescription());
-        degree.setText(singleWeather.getMain().getTemp().intValue() + " °C");
+        degree.setText(singleWeather.getMain().getTemp().intValue() + "°C");
     }
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        Log.d("buradamısın", "burada");
         switch (requestCode) {
             case Constant.REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mainPresenter.locationProcess();
-
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
                 } else {
-
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
                 }
                 return;
             }
-
+            // other 'case' lines to check for other
+            // permissions this app might request.
         }
-
     }
 }
