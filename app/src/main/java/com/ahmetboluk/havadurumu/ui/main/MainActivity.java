@@ -22,7 +22,6 @@ public class MainActivity extends BaseActivity implements MainViewInterface{
     TextView condition;
     TextView degree;
 
-<<<<<<< HEAD
 
 
     @Override
@@ -37,27 +36,25 @@ public class MainActivity extends BaseActivity implements MainViewInterface{
         super.onResume();
         mainPresenter.startLocationUpdates();
     }
-=======
->>>>>>> origin/master
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mainPresenter = new MainPresenter(MainActivity.this,this);
-        mainPresenter.locationProcess();
 
-        if (mainPresenter.location!=null){
-            Log.d("Latitude",mainPresenter.location[0]+"");
-            Log.d("Longitude",mainPresenter.location[1]+"");
-            //mainPresenter.getForecasts(mainPresenter.location[0],mainPresenter.location[1]);
-
-        }
         rvForecast = findViewById(R.id.five_days_forecast);
         rvForecast.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
         location=findViewById(R.id.location);
         condition=findViewById(R.id.condition);
         degree=findViewById(R.id.degree);
+
+        getLocationProcess();
+
     }
+
+    public void getLocationProcess(){ mainPresenter.locationProcess(); }
 
     @Override
     public void displayDailyForecasts(Forecast forecast) {
@@ -72,6 +69,7 @@ public class MainActivity extends BaseActivity implements MainViewInterface{
         condition.setText(singleWeather.getWeather().get(0).getDescription());
         degree.setText(singleWeather.getMain().getTemp().intValue() + "°C");
     }
+
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         Log.d("buradamısın", "burada");
         switch (requestCode) {
@@ -92,4 +90,5 @@ public class MainActivity extends BaseActivity implements MainViewInterface{
             // permissions this app might request.
         }
     }
+
 }

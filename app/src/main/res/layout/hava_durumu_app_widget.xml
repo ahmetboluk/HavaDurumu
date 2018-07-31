@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="horizontal"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="0.5">
+        <TextView
+            android:id="@+id/city_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            android:contentDescription="Hava Durumu"
+            android:gravity="center"
+            android:text="Yer adı"
+            android:textColor="#ffffff"
+            android:textSize="30sp"/>
+        <TextView
+            android:id="@+id/weather_description"
+            android:layout_margin="10sp"
+            android:textColor="#ffffff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="güneşli"
+            android:textSize="20sp"
+            />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/weather_degree"
+        android:textAlignment="textEnd"
+        android:layout_margin="10sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="20°C"
+        android:layout_weight="0.5"
+        android:textSize="60sp"
+        android:textColor="#ffffff"
+        />
+</LinearLayout>

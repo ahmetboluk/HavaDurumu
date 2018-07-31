@@ -36,7 +36,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainPresenter implements MainPresenterInterface, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ActivityCompat.OnRequestPermissionsResultCallback {
+public class MainPresenter implements
+        MainPresenterInterface,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        ActivityCompat.OnRequestPermissionsResultCallback {
+
     GoogleApiClient mGoogleApiClient;
     Task<Location> mLastLocation;
     MainViewInterface mainViewInterface;
@@ -45,24 +50,52 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
     FusedLocationProviderClient mFusedLocationClient;
     LocationRequest mLocationRequest;
 
-
-
-    double[] location;
-
-
     public MainPresenter(Activity activity, MainViewInterface mainViewInterface) {
         this.mainViewInterface = mainViewInterface;
         this.activity = activity;
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.i("Location", "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+    }
+
+    @Override
+    public void onConnected(Bundle arg0) {
+// Once connected with google api, get the location
 
     }
 
-    void locationProcess() {
+    @Override
+    public void onConnectionSuspended(int arg0) {
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d("buradamısın", "burada");
+        switch (requestCode) {
+            case Constant.REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                }
+                return;
+            }
+
+        }
+    }
+
+
+    public void locationProcess() {
         mGoogleApiClient = new GoogleApiClient.Builder(activity)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API).build();
 
         mGoogleApiClient.connect();
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1);
@@ -115,71 +148,6 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
 
     }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        Log.i("Location", "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
-    }
-
-    @Override
-    public void onConnected(Bundle arg0) {
-// Once connected with google api, get the location
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int arg0) {
-        mGoogleApiClient.connect();
-    }
-
-    private boolean checkPlayServices() {
-
-        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
-        int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(activity);
-
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (googleApiAvailability.isUserResolvableError(resultCode)) {
-                googleApiAvailability.getErrorDialog(activity, resultCode,
-                        0).show();
-            } else {
-                Toast.makeText(activity,
-                        "This device is not supported.", Toast.LENGTH_LONG)
-                        .show();
-            }
-            return false;
-        }
-        return true;
-    }
-
-    public Address getAddress(double latitude, double longitude) {
-        Geocoder geocoder;
-        List<Address> addresses;
-        geocoder = new Geocoder(activity, Locale.getDefault());
-
-        try {
-            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-            return addresses.get(0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d("buradamısın", "burada");
-        switch (requestCode) {
-            case Constant.REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                } else {
-                }
-                return;
-            }
-
-        }
-    }
-
     public void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -222,9 +190,9 @@ public class MainPresenter implements MainPresenterInterface, GoogleApiClient.Co
                 mLocationCallback,
                 null /* Looper */);
     }
+
     public void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
-
 
 }
